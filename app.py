@@ -1,6 +1,6 @@
 # Rendert a template, redirect to another url, create url
 from flask import Flask, render_template, redirect, url_for
-# use pymongo to interact with Mongo database
+# Use pymongo to interact with Mongo database
 from flask_pymongo import PyMongo
 # Convert from Jupyter Notebook to Python
 import scraping
@@ -28,5 +28,5 @@ def scrape():
    mars.update({}, mars_data, upsert=True) # Add an empty JSON object with {}, upsert=True indicates to Mongo to create a new document if one doesn't already exist
    return redirect('/', code=302) # Navigate our page back to / where we can see the updated content
 
-   if __name__ == "__main__":
-      app.run()
+if __name__ == "__main__":
+   app.run()
