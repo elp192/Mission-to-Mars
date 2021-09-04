@@ -21,7 +21,8 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
-        "last_modified": dt.datetime.now()
+        "last_modified": dt.datetime.now(),
+        "img_url_title":img_url_title(browser)
     }
        # Stop webdriver and return data
     browser.quit()
@@ -111,6 +112,43 @@ def mars_facts():
     df.set_index('description', inplace=True)
     return df.to_html(classes="table table-striped")
     
+
+def img_url_title(browser):
+    # Use browser to visit the URL 
+    #url = 'https://marshemispheres.com/'
+    url='https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    browser.visit(url)
+
+    # Create a list to hold the images and titles.
+    hemisphere_img_urls = []
+
+    # Retrieve the image urls and titles for each hemisphere.
+    # Set up the HTML parser (convert the html browser to soap obj)
+    html = browser.html
+    soup_ = soup(html, 'html.parser')
+
+    list_h3_length=len(soup_.body.find_all('h3'))
+
+    for i in range(list_h3_length):
+        hemisphere_dic={}
+        # click
+        browser.find_by_css("a.product-item h3")[i].click()
+        
+        # Select title
+        html = browser.html
+        soup_img = soup(html, 'html.parser')
+        img_title=soup_img.select_one('h2.title').get_text()
+        
+        #find url
+        img_url = browser.find_link_by_text("Sample")['href']
+        
+        # Define dectionaries
+        hemisphere_dic={'img_url':img_url,'title':img_title}
+        hemisphere_img_urls.append(hemisphere_dic)
+        
+        browser.back()
+    return hemisphere_img_urls
+            
 # Tell flask the script is complete and ready for action
 if __name__ == "__main__":
     # If running as script, print scraped data
